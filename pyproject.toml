@@ -1,0 +1,16 @@
+[project]
+name = "ritsu"
+version = "0.1.0"
+description = "a fun osu! discord bot"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "aiosqlite>=0.22.1",
+    "cashews>=7.5.0",
+    "discord-py-interactions>=5.16.0",
+    "osu-py>=4.2.0",
+    "pydle>=1.1.0",
+    "python-dotenv>=1.2.2",
+    "rich>=14.3.3",
+    "sqlmodel>=0.0.37",
+]

@@ -1,2 +1,2 @@
 # ritsu
-a fun osu! Discord bot
+a fun osu! discord bot
