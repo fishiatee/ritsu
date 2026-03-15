@@ -11,6 +11,7 @@ dependencies = [
     "osu-py>=4.2.0",
     "pydle>=1.1.0",
     "python-dotenv>=1.2.2",
+    "pyyaml>=6.0.3",
     "rich>=14.3.3",
     "sqlmodel>=0.0.37",
 ]
