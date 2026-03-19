@@ -18,6 +18,7 @@ def init():
     cache.setup("mem://")
     asyncio.run(create_db())
     bot.load_extension("extensions.discord")
+    bot.load_extension("extensions.pool")
     bot.start(os.environ.get("RITSU_DISCORD_BOT_TOKEN"))
 
 if __name__ == "__main__":

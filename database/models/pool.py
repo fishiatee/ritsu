@@ -1,26 +1,20 @@
 from sqlmodel import SQLModel, Field, Column, JSON
 
-class Freemod(SQLModel):
-    allowed_mods: list[str]
-    nm_multiplier: float
-    hr_multiplier: float
-    hd_multiplier: float
-    ez_multiplier: float
-    fl_multiplier: float
-
-class Slot(SQLModel):
-    name: str
-    pooler_note: str
-    freemod: Freemod
-    tiebreaker: bool
-    mods: list[str]
+class Slot(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    slot_id: str
+    pooler_note: str = Field(default="")
+    force_mod: bool = Field(default=False)
+    tiebreaker: bool = Field(default=False)
+    mods: list[str] = Field(sa_column=Column(JSON))
     map_id: int
 
 class Pool(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str
-    poolers: list[str] = Field(sa_column=Column(JSON))
-    description: str
+    pool_id: str
+    game_mode: str
+    description: str = Field(default="")
     creator_id: int
     creation_date: int
-    slots: list[Slot] = Field(sa_column=Column(JSON))
+    slots: dict[str, str] = Field(sa_column=Column(JSON))
