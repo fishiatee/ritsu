@@ -19,6 +19,7 @@ def init():
     asyncio.run(create_db())
     bot.load_extension("extensions.discord")
     bot.load_extension("extensions.pool")
+    bot.load_extension("extensions.duel")
     bot.start(os.environ.get("RITSU_DISCORD_BOT_TOKEN"))
 
 if __name__ == "__main__":

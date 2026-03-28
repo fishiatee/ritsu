@@ -3,20 +3,24 @@ from typing import Any
 from database.manager import DbSession
 from database.models.user import User
 from database.models.pool import Pool, Slot
+from database.models.party import Party
 from datetime import datetime
 from sqlmodel import select
 from sqlmodel import SQLModel
 
+async def add_to_db(obj: SQLModel) -> Any:
+    db = DbSession()
+    await db.add_or_update(obj)
+    await db.close()
+    return obj
+
 async def link_user(discord_id: int, osu_id: int) -> User:
     now = int(datetime.now().timestamp())
-    db = DbSession()
     user = User()
     user.discord_id = discord_id
     user.osu_user_id = osu_id
     user.linked_date = now
-    await db.add_or_update(user)
-    await db.close()
-    return user
+    return await add_to_db(user)
 
 async def get_linked_user(discord_id: int) -> User | None:
     db = DbSession()
@@ -46,8 +50,9 @@ async def get_slot_by_id(id: str) -> Slot | None:
     await db.close()
     return r.one_or_none()
 
-async def add_to_db(obj: SQLModel) -> Any:
+async def is_user_in_party(id: str) -> bool:
     db = DbSession()
-    await db.add_or_update(obj)
+    query = select(Slot).where(Slot.slot_id == id)
+    r = await db.execute_sql(query)
     await db.close()
-    return obj
+    return r.one_or_none()
