@@ -1,4 +1,4 @@
-from utils.logger import Logger
+from utils import logger
 from utils.misc import gen_hex_str
 from database.models.party import Party
 from match.irc import IrcClient
@@ -9,18 +9,13 @@ class MatchType(IntEnum):
     SOLO = 0
     TEAM = 1
 
-@dataclass
-class MatchProperties:
-    type: MatchType
-    best_of: int
-
-@dataclass
+@dataclass(init=False)
 class MatchTeam:
     party_1: Party
     party_2: Party | None
     points: list[int]
 
-@dataclass
+@dataclass(init=False)
 class MatchPick:
     name: str
     slot_id: str
@@ -29,7 +24,8 @@ class MatchPick:
 class Match:
     __client__: IrcClient
     id: str
-    properties: MatchProperties
+    type: MatchType
+    best_of: int
     teams: MatchTeam
     picks: list[MatchPick]
     def __init__(self):

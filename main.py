@@ -1,6 +1,6 @@
 import os
 import asyncio
-from utils.logger import Logger
+from utils import logger
 from database.manager import create_db
 from dotenv import load_dotenv
 from cashews import cache
@@ -11,7 +11,7 @@ bot = Client(intents=Intents.DEFAULT,
 
 @listen()
 async def on_ready():
-    Logger.success("ritsu is ready!")
+    logger.success("ritsu is ready!")
 
 def init():
     load_dotenv()
@@ -23,5 +23,5 @@ def init():
     bot.start(os.environ.get("RITSU_DISCORD_BOT_TOKEN"))
 
 if __name__ == "__main__":
-    Logger.info("initializing ritsu...")
+    logger.info("initializing ritsu...")
     init()

@@ -1,5 +1,5 @@
 from wrapper.user import search_osu_profiles
-from utils.logger import Logger
+from utils import logger
 from utils.embed import EmbedBuilder
 from utils.db import link_user, get_linked_user
 from database.manager import DbSession
@@ -13,7 +13,7 @@ class DiscordExtension(Extension):
                   required=True,
                   opt_type=OptionType.STRING)
     async def link_command(self, ctx: SlashContext, user_name: str = None):
-        Logger.info(f"user {ctx.author.id} ({ctx.author.display_name}) invoked /link")
+        logger.info(f"user {ctx.author.id} ({ctx.author.display_name}) invoked /link")
 
         embed = EmbedBuilder()
 
@@ -34,7 +34,7 @@ class DiscordExtension(Extension):
             await ctx.send(embed=embed.build())
             return
         
-        Logger.verbose(f"(/link) got profile: {profile.username}")
+        logger.verbose(f"(/link) got profile: {profile.username}")
         
         await link_user(ctx.user.id, profile.id)
 
@@ -47,7 +47,7 @@ class DiscordExtension(Extension):
     @slash_command(name="unlink",
                    description="Unlink your osu! account")
     async def unlink_command(self, ctx: SlashContext):
-        Logger.info(f"user {ctx.author.id} ({ctx.author.display_name}) invoked /unlink")
+        logger.info(f"user {ctx.author.id} ({ctx.author.display_name}) invoked /unlink")
 
         embed = EmbedBuilder()
 

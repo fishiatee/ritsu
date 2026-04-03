@@ -1,5 +1,5 @@
 import os
-from utils.logger import Logger
+from utils import logger
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio.engine import create_async_engine
@@ -18,12 +18,12 @@ engine = create_async_engine(SQL_URL)
 
 async def create_db():
     if not os.path.isfile(DATABASE_PATH):
-        Logger.info("no exiting database found, generating one...")
+        logger.info("no exiting database found, generating one...")
         async with engine.begin() as conn:
             await conn.run_sync(SQLModel.metadata.create_all)
-        Logger.success("database generated!")
+        logger.success("database generated!")
     else:
-        Logger.verbose("database already exists, loading that...")
+        logger.verbose("database already exists, loading that...")
 
 class DbSession:
     session: AsyncSession

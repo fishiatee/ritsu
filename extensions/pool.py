@@ -1,5 +1,5 @@
 import yaml
-from utils.logger import Logger
+from utils import logger
 from utils.embed import EmbedBuilder
 from utils.db import get_pool_by_id, get_slot_by_id
 from pool.validator import validate_pool
@@ -18,7 +18,7 @@ class PoolExtension(Extension):
                   required=True,
                   opt_type=OptionType.ATTACHMENT)
     async def upload_pool_command(self, ctx: SlashContext, manifest: Attachment):
-        Logger.info(f"user {ctx.author.id} ({ctx.author.display_name}) invoked /upload-pool")
+        logger.info(f"user {ctx.author.id} ({ctx.author.display_name}) invoked /upload-pool")
 
         await ctx.defer()
 
@@ -36,7 +36,7 @@ class PoolExtension(Extension):
             await ctx.send(embed=embed.build())
             return
         
-        Logger.verbose(f"(/upload-pool) manifest content: {pool_data}")
+        logger.verbose(f"(/upload-pool) manifest content: {pool_data}")
         
         validation_results = await validate_pool(pool_data)
 

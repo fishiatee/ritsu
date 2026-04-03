@@ -1,9 +1,7 @@
 from typing import Any
-
 from database.manager import DbSession
 from database.models.user import User
 from database.models.pool import Pool, Slot
-from database.models.party import Party
 from datetime import datetime
 from sqlmodel import select
 from sqlmodel import SQLModel
