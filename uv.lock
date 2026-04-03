@@ -476,6 +476,12 @@ wheels = [
 ]
 
 [[package]]
+name = "pure-sasl"
+version = "0.6.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/83/b7/a0d688f86c869073cc28c0640899394a1cf68a6d87ee78a09565e9037da6/pure-sasl-0.6.2.tar.gz", hash = "sha256:53c1355f5da95e2b85b2cc9a6af435518edc20c81193faa0eea65fdc835138f4", size = 11617, upload-time = "2019-10-14T21:43:57.13Z" }
+
+[[package]]
 name = "pydantic"
 version = "2.12.5"
 source = { registry = "https://pypi.org/simple" }
@@ -641,6 +647,7 @@ dependencies = [
     { name = "discord-py-interactions" },
     { name = "httpx" },
     { name = "osu-py" },
+    { name = "pure-sasl" },
     { name = "pydle" },
     { name = "python-dotenv" },
     { name = "pyyaml" },
@@ -655,6 +662,7 @@ requires-dist = [
     { name = "discord-py-interactions", specifier = ">=5.16.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "osu-py", specifier = ">=4.2.0" },
+    { name = "pure-sasl", specifier = ">=0.6.2" },
     { name = "pydle", specifier = ">=1.1.0" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "pyyaml", specifier = ">=6.0.3" },

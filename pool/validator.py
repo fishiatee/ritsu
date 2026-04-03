@@ -1,4 +1,4 @@
-from utils.logger import Logger
+from utils import logger
 from wrapper.beatmap import get_beatmap_data
 from typing import Any
 
@@ -8,7 +8,7 @@ async def validate_pool(manifest: Any) -> list[str]:
     # check if its a valid dict to begin with
     if not type(manifest) is dict:
         return ["- not a YAML file"]
-    Logger.info("validating pool manifest...")
+    logger.info("validating pool manifest...")
     issues = []
     unique_map_ids = {}
     # ensure required fields
@@ -64,5 +64,5 @@ async def validate_pool(manifest: Any) -> list[str]:
         else:
             # add to unique map IDs
             unique_map_ids[slot["map_id"]] = slot["name"]
-    Logger.info(f"{len(issues)} issue(s) found")
+    logger.info(f"{len(issues)} issue(s) found")
     return issues
