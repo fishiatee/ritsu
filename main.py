@@ -1,7 +1,8 @@
 import os
 import asyncio
 from utils import logger
-from database.manager import create_db
+from database.manager import DbSession
+from irc import IrcManager
 from dotenv import load_dotenv
 from cashews import cache
 from interactions import Client, Intents, listen
@@ -13,15 +14,16 @@ bot = Client(intents=Intents.DEFAULT,
 async def on_ready():
     logger.success("ritsu is ready!")
 
-def init():
+async def async_init():
+    await DbSession.initialize_db()
+
+if __name__ == "__main__":
+    logger.info("initializing ritsu...")
     load_dotenv()
     cache.setup("mem://")
-    asyncio.run(create_db())
+    asyncio.run(async_init())
+    IrcManager.initialize_irc()
     bot.load_extension("extensions.discord")
     bot.load_extension("extensions.pool")
     bot.load_extension("extensions.duel")
     bot.start(os.environ.get("RITSU_DISCORD_BOT_TOKEN"))
-
-if __name__ == "__main__":
-    logger.info("initializing ritsu...")
-    init()

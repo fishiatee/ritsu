@@ -1,4 +1,4 @@
-from utils.logger import Logger
+from utils import logger
 from utils.embed import EmbedBuilder
 from utils.db import get_linked_user
 from match.match import MatchType, Match
@@ -7,12 +7,13 @@ from interactions import Extension, SlashContext, slash_command, slash_option, O
 class DuelExtension(Extension):
     @slash_command(name="duel",
                    description="Initiate a duel")
-    @slash_option(name="discord",
+    @slash_option(name="pool_id",
+                  description="Pool ID",
+                  opt_type=OptionType.STRING,
+                  required=True)
+    @slash_option(name="opponent",
                   description="Who to initiate the duel against",
                   opt_type=OptionType.USER)
-    @slash_option(name="pool",
-                  description="Pool name or ID",
-                  opt_type=OptionType.STRING)
     @slash_option(name="best_of",
                   description="Determines the amount of map that have to be played (default: BO7)",
                   opt_type=OptionType.INTEGER,
@@ -21,8 +22,8 @@ class DuelExtension(Extension):
                       SlashCommandChoice(name="BO7 (first to 4)", value=7),
                       SlashCommandChoice(name="BO9 (first to 5)", value=9),
                       SlashCommandChoice(name="BO11 (first to 6)", value=9)])
-    async def duel_command(self, ctx: SlashContext, best_of: int, discord: Member | User = None, pool: str = None):
-        Logger.info(f"user {ctx.author.id} ({ctx.author.display_name}) invoked /duel")
+    async def duel_command(self, ctx: SlashContext, opponent: Member | User = None, pool_id: str = None, best_of: int = 7):
+        logger.info(f"user {ctx.author.id} ({ctx.author.display_name}) invoked /duel")
 
         await ctx.defer()
 
@@ -38,14 +39,9 @@ class DuelExtension(Extension):
             await ctx.send(embed=embed.build())
             return
         
-        match = Match()
-        match.properties.type = MatchType.SOLO
-        
-        if discord:
-            match.properties.type = MatchType.TEAM
-
+        if opponent:
             # check if opponent has linked
-            opponent = await get_linked_user(discord.id)
+            opponent = await get_linked_user(opponent.id)
 
             if not opponent:
                 embed.set_title("Error")
@@ -54,4 +50,5 @@ class DuelExtension(Extension):
                 await ctx.send(embed=embed.build())
                 return
             
-        
+        # TODO: support 2v2/3v3/4v4
+        match = await Match.create(pool_id, best_of, ctx.author.id, opponent.id)

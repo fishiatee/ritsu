@@ -16,15 +16,6 @@ SQL_URL = f"sqlite+aiosqlite:///{DATABASE_PATH}"
 
 engine = create_async_engine(SQL_URL)
 
-async def create_db():
-    if not os.path.isfile(DATABASE_PATH):
-        logger.info("no exiting database found, generating one...")
-        async with engine.begin() as conn:
-            await conn.run_sync(SQLModel.metadata.create_all)
-        logger.success("database generated!")
-    else:
-        logger.verbose("database already exists, loading that...")
-
 class DbSession:
     session: AsyncSession
     def __init__(self):
@@ -39,3 +30,13 @@ class DbSession:
         return await self.session.exec(statement)
     async def close(self):
         await self.session.close()
+    @staticmethod
+    async def initialize_db():
+        logger.info("initializing database...")
+        if not os.path.isfile(DATABASE_PATH):
+            logger.verbose("no exiting database found, generating one...")
+            async with engine.begin() as conn:
+                await conn.run_sync(SQLModel.metadata.create_all)
+            logger.verose("database generated!")
+        else:
+            logger.verbose("database already exists, loading that...")
