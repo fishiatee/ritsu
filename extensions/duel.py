@@ -24,7 +24,7 @@ class DuelExtension(Extension):
                       SlashCommandChoice(name="BO5 (first to 3)", value=5),
                       SlashCommandChoice(name="BO7 (first to 4)", value=7),
                       SlashCommandChoice(name="BO9 (first to 5)", value=9),
-                      SlashCommandChoice(name="BO11 (first to 6)", value=9)])
+                      SlashCommandChoice(name="BO11 (first to 6)", value=11)])
     async def duel_command(self, ctx: SlashContext, opponent: Member | User = None, pool_id: str = None, best_of: int = 7):
         logger.info(f"user {ctx.author.id} ({ctx.author.display_name}) invoked /duel")
 
