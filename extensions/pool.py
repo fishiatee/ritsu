@@ -1,11 +1,11 @@
 import yaml
 from utils import logger
 from utils.embed import EmbedBuilder
-from utils.db import get_pool_by_id, get_slot_by_id
 from pool.validator import validate_pool
 from pool.manager import build_pool
 from pool.utils import calculate_avg_sr, calculate_sr
 from wrapper.beatmap import get_beatmap_data
+from database.managers.pool import get_pool, get_slot
 from interactions import Extension, SlashContext, slash_command, slash_option, OptionType, Attachment
 from httpx import AsyncClient
 from yaml.parser import ParserError
@@ -51,7 +51,7 @@ class PoolExtension(Extension):
 
         # build pool object & add to db
         id = await build_pool(pool_data, ctx.user.id)
-        pool = await get_pool_by_id(id)
+        pool = await get_pool(id)
 
         # calculate average pool sr
         avg_sr = await calculate_avg_sr(pool.slots.values())
@@ -65,7 +65,7 @@ class PoolExtension(Extension):
         embed.add_content("")       # new line
         embed.add_content(f"**Slots** (average SR: **{round(avg_sr, 2)}**★)")
         for name, id in pool.slots.items():
-            slot = await get_slot_by_id(id)
+            slot = await get_slot(id)
             data = await get_beatmap_data(slot.map_id)
             sr = await calculate_sr(slot)
             embed.add_content(f"- `{name}` {data.beatmapset.artist} - {data.beatmapset.title} ({data.version}) [**{round(sr, 2)}**★]")

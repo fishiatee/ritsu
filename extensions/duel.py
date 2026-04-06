@@ -1,8 +1,11 @@
 from utils import logger
 from utils.embed import EmbedBuilder
-from utils.db import get_linked_user
-from match.match import MatchType, Match
-from interactions import Extension, SlashContext, slash_command, slash_option, OptionType, SlashCommandChoice, Member, User
+from database.managers.user import get_linked_user
+from database.managers.pool import get_pool
+from wrapper.user import get_user_profile
+from match.match import Match
+from main import bot
+from interactions import Extension, SlashContext, slash_command, slash_option, OptionType, SlashCommandChoice, Member, User, Button, ButtonStyle
 
 class DuelExtension(Extension):
     @slash_command(name="duel",
@@ -45,10 +48,37 @@ class DuelExtension(Extension):
 
             if not opponent:
                 embed.set_title("Error")
-                embed.add_content("Your opponent doesn't seems to have linked their *osu!* profile to their Discord account yet.\n")
+                embed.add_content("Your opponent doesn't seem to have linked their *osu!* profile to their Discord account yet.\n")
                 embed.add_content("**Please tell them to do so via the `/link` command, then try again.**")
                 await ctx.send(embed=embed.build())
                 return
             
+        pool = await get_pool(pool_id)
+
+        if not pool:
+            embed.set_title("Error")
+            embed.add_content(f"Pool ID `{pool_id}` does not seem to exist.\n")
+            embed.add_content("**Please re-check the entered ID, or upload a new pool.**")
+            await ctx.send(embed=embed.build())
+            return
+            
         # TODO: support 2v2/3v3/4v4
-        match = await Match.create(pool_id, best_of, ctx.author.id, opponent.id)
+        match = await Match.create(pool_id, best_of, ctx.author, opponent)
+
+        embed.set_title("Match Overview")
+        
+        embed.add_field("Pool", pool.name)
+        embed.add_field("Type", match.type)
+        embed.add_field("Participant(s)", (await get_user_profile((await get_linked_user(match.teams.party_1.leader_id)).osu_user_id)).username, True)
+        if opponent:
+            embed.add_field("Opponent(s)", (await get_user_profile((await get_linked_user(match.teams.party_2.leader_id)).osu_user_id)).username, True)
+        embed.add_content("Please review the provided information, then click **Ready** to start the match.")
+
+        ready_button = Button(style=ButtonStyle.SECONDARY,
+                              label="Ready!")
+
+        message = await ctx.send(embed=embed.build(),
+                                 components=[ready_button])
+        
+        await bot.wait_for_component(messages=message,
+                                     components=[ready_button])

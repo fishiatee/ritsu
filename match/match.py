@@ -1,14 +1,15 @@
+from interactions import Member, User
+
 from utils import logger
 from utils.misc import gen_hex_str
 from database.models.party import Party
 from database.managers.party import create_party
-from irc import IrcClient
-from dataclasses import dataclass
-from enum import IntEnum
+from irc.client import RitsuIrc
+from enum import StrEnum
 
-class MatchType(IntEnum):
-    SOLO = 0
-    TEAM = 1
+class MatchType(StrEnum):
+    SOLO = "Solo"
+    TEAM = "Team"
 
 class MatchTeam:
     party_1: Party
@@ -29,7 +30,7 @@ class MatchPick:
     party: Party
 
 class Match:
-    __client__: IrcClient
+    __client__: RitsuIrc
     id: str
     type: MatchType
     best_of: int
@@ -38,11 +39,13 @@ class Match:
     picks: list[MatchPick]
     def __init__(self):
         self.__id__ = gen_hex_str()
-        self.__client__ = IrcClient(self)
     async def start(self):
         pass
+    async def initialize(self):
+        logger.verbose(f"starting match {self.id}...")
+        await self.__client__.create_match()
     @classmethod
-    async def create(cls, pool_id: str, best_of: int, dueler_id: int, opponent_id: int | None):
+    async def create(cls, pool_id: str, best_of: int, dueler: Member | User, opponent: Member | User | None):
         logger.verbose("creating new match...")
         match = cls()
         match.type = MatchType.SOLO
@@ -50,10 +53,15 @@ class Match:
         match.best_of = best_of
         match.pool_id = pool_id
         teams = MatchTeam()
-        teams.party_1 = await create_party([dueler_id])
-        if opponent_id:
+        teams.party_1 = await create_party(members=[dueler.id])
+        if opponent:
             match.type = MatchType.TEAM
-            teams.party_2 = await create_party([opponent_id])
+            teams.party_2 = await create_party(members=[opponent.id])
+        else:
+            teams.party_2 = await create_party(name="Solo Match")
         match.teams = teams
         logger.verbose("initializing new irc client...")
+        match_name = f"RITSU: ({match.teams.party_1.name}) vs ({match.teams.party_2.name})"
+        match.__client__ = RitsuIrc.new(match_name)
+        logger.success(f"created new match {match.id}!")
         return match

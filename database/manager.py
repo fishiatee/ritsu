@@ -1,4 +1,5 @@
 import os
+from typing import Any
 from utils import logger
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -37,6 +38,13 @@ class DbSession:
             logger.verbose("no exiting database found, generating one...")
             async with engine.begin() as conn:
                 await conn.run_sync(SQLModel.metadata.create_all)
-            logger.verose("database generated!")
+            logger.success("database generated!")
         else:
             logger.verbose("database already exists, loading that...")
+    @staticmethod
+    async def add_to_db(obj: SQLModel) -> Any:
+        db = DbSession()
+        await db.add_or_update(obj)
+        await db.session.refresh(obj)
+        await db.close()
+        return obj

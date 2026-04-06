@@ -1,5 +1,5 @@
 from utils.misc import gen_hex_str
-from utils.db import add_to_db
+from database.manager import DbSession
 from database.models.pool import Pool, Slot
 from datetime import datetime
 
@@ -26,6 +26,6 @@ async def build_pool(manifest: dict, creator_id: int) -> str:
         if "tiebreaker" in i.keys():
             slot.tiebreaker = i["tiebreaker"]
         pool.slots[i["name"]] = slot_id
-        await add_to_db(slot)
-    await add_to_db(pool)
+        await DbSession.add_to_db(slot)
+    await DbSession.add_to_db(pool)
     return pool_id

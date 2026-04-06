@@ -1,4 +1,4 @@
-from utils.db import get_slot_by_id
+from database.managers.pool import get_slot
 from database.models.pool import Slot
 from wrapper.beatmap import get_beatmap_attr_data
 from cashews import cache
@@ -18,7 +18,7 @@ async def calculate_avg_sr(slot_ids: list[str]) -> float:
     srs = 0
     avg_sr = 0
     for id in slot_ids:
-        slot = await get_slot_by_id(id)
+        slot = await get_slot(id)
         avg_sr += await calculate_sr(slot)
         srs += 1
     avg_sr = avg_sr / srs

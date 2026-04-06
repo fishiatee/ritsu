@@ -1,7 +1,7 @@
 from wrapper.user import search_osu_profiles
 from utils import logger
 from utils.embed import EmbedBuilder
-from utils.db import link_user, get_linked_user
+from database.managers.user import get_linked_user, link_user
 from database.manager import DbSession
 from interactions import Extension, SlashContext, slash_command, slash_option, OptionType
 
